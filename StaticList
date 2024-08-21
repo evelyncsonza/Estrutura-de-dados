@@ -40,9 +40,22 @@ public class StaticList {
             }
         }
         this.data[pos] = value;
-        if (pos == count) {
-            count++;
+        if (pos >= count) {
+            count = pos + 1;
         }
+    }
+
+    public void remove(int pos) {
+        if (pos < 0 || pos >= size || pos >= count) {
+            throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
+        }
+        // Desloca os elementos para preencher o espaço do elemento removido
+        for (int i = pos; i < count - 1; i++) {
+            this.data[i] = this.data[i + 1];
+        }
+        // Limpa a última posição da lista
+        this.data[count - 1] = 0;
+        count--;
     }
 
     public boolean isEmpty() {
