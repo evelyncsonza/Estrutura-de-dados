@@ -3,19 +3,23 @@ public class StaticList {
     private int size;
     private int count;
 
+    // Construtor que define o tamanho da lista
     public StaticList(int size) {
         this.size = size;
         this.data = new int[size];
-        this.count = 0; 
+        this.count = 0; // Inicialmente, a lista está vazia
     }
 
+    // Limpa a lista (reseta o contador para 0)
     public void clear() {
         this.count = 0;
+        // Inicializa o array com zero para representar uma lista limpa
         for (int i = 0; i < size; i++) {
             data[i] = 0;
         }
     }
 
+    // Adiciona um elemento no final da lista
     public void add(int value) {
         if (isFull()) {
             throw new RuntimeException("Lista cheia. Não é possível adicionar mais elementos.");
@@ -24,6 +28,7 @@ public class StaticList {
         count++;
     }
 
+    // Adiciona um elemento em uma posição específica
     public void add(int value, int pos) {
         if (pos < 0 || pos >= size) {
             throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
@@ -45,6 +50,7 @@ public class StaticList {
         }
     }
 
+    // Remove o elemento na posição específica
     public void remove(int pos) {
         if (pos < 0 || pos >= size || pos >= count) {
             throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
@@ -58,14 +64,17 @@ public class StaticList {
         count--;
     }
 
+    // Verifica se a lista está vazia
     public boolean isEmpty() {
         return count == 0;
     }
 
+    // Verifica se a lista está cheia
     public boolean isFull() {
         return count == size;
     }
 
+    // Define o valor de um elemento em uma posição específica
     public void setData(int value, int pos) {
         if (pos < 0 || pos >= size) {
             throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
@@ -78,6 +87,7 @@ public class StaticList {
         }
     }
 
+    // Retorna o valor de um elemento em uma posição específica
     public int getData(int pos) {
         if (pos < 0 || pos >= size) {
             throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
@@ -85,7 +95,87 @@ public class StaticList {
         return this.data[pos];
     }
 
+    // Retorna o tamanho atual da lista (quantidade de elementos)
     public int getSize() {
         return count;
     }
+
+    public static void main(String[] args) {
+        // Teste 1: Inserção de Valores
+        System.out.println("Teste 1: Inserção de Valores");
+        StaticList list1 = new StaticList(5);
+        list1.add(10, 0);
+        list1.add(20, 1);
+        list1.add(30); // Adiciona no próximo índice disponível
+        System.out.println("Valor no índice 0: " + list1.getData(0)); // Esperado: 10
+        System.out.println("Valor no índice 1: " + list1.getData(1)); // Esperado: 20
+        System.out.println("Valor no índice 2: " + list1.getData(2)); // Esperado: 30
+        System.out.println();
+
+        // Teste 2: Inserção em Índice Preenchido
+        System.out.println("Teste 2: Inserção em Índice Preenchido");
+        StaticList list2 = new StaticList(5);
+        list2.add(10, 0);
+        list2.add(20, 1);
+        list2.add(30);
+
+        try {
+            if (list2.isFull()) {
+                System.out.println("Lista cheia. Não é possível adicionar mais elementos.");
+            } else {
+                list2.add(25, 1); // Move valores para a direita e insere 25 no índice 1
+            }
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("Valor no índice 0: " + list2.getData(0)); // Esperado: 10
+        System.out.println("Valor no índice 1: " + list2.getData(1)); // Esperado: 25
+        System.out.println("Valor no índice 2: " + list2.getData(2)); // Esperado: 20
+        System.out.println("Valor no índice 3: " + list2.getData(3)); // Esperado: 30
+        System.out.println();
+
+        // Teste 3: Inserção após Limpeza
+        System.out.println("Teste 3: Inserção após Limpeza");
+        StaticList list3 = new StaticList(5);
+        list3.add(10, 0);
+        list3.add(20, 1);
+        list3.clear();
+
+        try {
+            if (list3.getData(2) != 0) {
+                list3.add(30, 3); // Não deve inserir porque o índice 2 está vazio
+            } else {
+                throw new RuntimeException("Não é possível adicionar um valor em uma posição não sequencial com índice anterior vazio.");
+            }
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+        list3.add(40, 0);
+        list3.add(50, 1);
+
+        System.out.println("Valor no índice 0: " + list3.getData(0)); // Esperado: 40
+        System.out.println("Valor no índice 1: " + list3.getData(1)); // Esperado: 50
+        System.out.println();
+
+        // Teste 4: Remoção e Deslocamento
+        System.out.println("Teste 4: Remoção e Deslocamento");
+        StaticList list4 = new StaticList(5);
+        list4.add(40, 0);
+        list4.add(50, 1);
+        list4.add(60, 2);
+        list4.add(70, 3);
+        list4.add(80, 4);
+
+        System.out.println("Removendo valor no índice 2...");
+        list4.remove(2);
+
+        System.out.println("Valor no índice 0: " + list4.getData(0)); // Esperado: 40
+        System.out.println("Valor no índice 1: " + list4.getData(1)); // Esperado: 50
+        System.out.println("Valor no índice 2: " + list4.getData(2)); // Esperado: 70 (antes estava 60, após remoção o índice 2 deve ser 70)
+        System.out.println("Valor no índice 3: " + list4.getData(3)); // Esperado: 80
+        System.out.println("Valor no índice 4: " + list4.getData(4)); // Esperado: 0
+    }
+
 }
