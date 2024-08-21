@@ -1,0 +1,78 @@
+public class StaticList {
+    private int[] data;
+    private int size;
+    private int count;
+
+    public StaticList(int size) {
+        this.size = size;
+        this.data = new int[size];
+        this.count = 0; 
+    }
+
+    public void clear() {
+        this.count = 0;
+        for (int i = 0; i < size; i++) {
+            data[i] = 0;
+        }
+    }
+
+    public void add(int value) {
+        if (isFull()) {
+            throw new RuntimeException("Lista cheia. Não é possível adicionar mais elementos.");
+        }
+        this.data[count] = value;
+        count++;
+    }
+
+    public void add(int value, int pos) {
+        if (pos < 0 || pos >= size) {
+            throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
+        }
+        if (isFull()) {
+            throw new RuntimeException("Lista cheia. Não é possível adicionar mais elementos.");
+        }
+        if (pos > count) {
+            throw new RuntimeException("Não é possível adicionar um valor em uma posição não sequencial com índice anterior vazio.");
+        }
+        if (pos < count) { // Se a posição já está preenchida, move os elementos para a direita
+            for (int i = count; i > pos; i--) {
+                this.data[i] = this.data[i - 1];
+            }
+        }
+        this.data[pos] = value;
+        if (pos == count) {
+            count++;
+        }
+    }
+
+    public boolean isEmpty() {
+        return count == 0;
+    }
+
+    public boolean isFull() {
+        return count == size;
+    }
+
+    public void setData(int value, int pos) {
+        if (pos < 0 || pos >= size) {
+            throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
+        }
+        this.data[pos] = value;
+        if (value != 0 && pos >= count) {
+            count = pos + 1;
+        } else if (value == 0 && pos == count - 1) {
+            count--;
+        }
+    }
+
+    public int getData(int pos) {
+        if (pos < 0 || pos >= size) {
+            throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
+        }
+        return this.data[pos];
+    }
+
+    public int getSize() {
+        return count;
+    }
+}
