@@ -1,0 +1,257 @@
+import java.util.Objects;
+
+public class listaDupla<T> {
+    private static class Node<T> {
+        Node<T> previous;
+        T data;
+        Node<T> next;
+
+        public Node(T value) {
+            this.data = value;
+            this.previous = null;
+            this.next = null;
+        }
+    }
+
+    // atributos
+    private Node<T> base;
+    private Node<T> top;
+    private int size;
+
+    // construtor
+    public listaDupla() {
+        this.base = null;
+        this.top = null;
+        this.size = 0;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public boolean isFull() {
+        return false;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    // add na posição especificada
+    public void add(int pos, T value) {
+        Objects.checkIndex(pos, size + 1);
+        Node<T> newNode = new Node<>(value);
+
+        if (pos == 0) { // insere na base (Fila)
+            if (isEmpty()) {
+                base = top = newNode;
+            } else {
+                newNode.next = base;
+                base.previous = newNode;
+                base = newNode;
+            }
+        } else if (pos == size) { // insere no topo (Fila ou pilha)
+            if (isEmpty()) {
+                base = top = newNode;
+            } else {
+                top.next = newNode;
+                newNode.previous = top;
+                top = newNode;
+            }
+        } else { // inserir no meio
+            Node<T> current = getNode(pos);
+            newNode.previous = current.previous;
+            newNode.next = current;
+
+            // atualiza o próximo do nó anterior, se existir
+            if (current.previous != null) {
+                current.previous.next = newNode;
+            } else { // se o nó anterior for nulo, tá na base
+                base = newNode;
+            }
+            current.previous = newNode;
+        }
+        size++;
+    }
+
+    // add no topo da lista (usado para pilha e fila)
+    public void add(T value) {
+        add(size, value);
+    }
+
+    // remove um nó da posição especificada
+    public T remove(int pos) {
+        Objects.checkIndex(pos, size);
+        Node<T> current = getNode(pos);
+        T removedValue = current.data;
+
+        if (current == base) { // remove da base (Fila)
+            base = base.next;
+            if (base != null) {
+                base.previous = null;
+            }
+        } else if (current == top) { // remove do topo (Fila ou pilha)
+            top = top.previous;
+            if (top != null) {
+                top.next = null;
+            }
+        } else { // remove do meio
+            if (current.previous != null) {
+                current.previous.next = current.next;
+            }
+            if (current.next != null) {
+                current.next.previous = current.previous;
+            }
+        }
+
+        size--;
+        return removedValue;
+    }
+
+    // método privado p remover um nó específico
+    private T removeNode(Node<T> node) {
+        if (node == null) {
+            return null;
+        }
+
+        T removedValue = node.data;
+
+        if (node == base) {
+            base = base.next;
+            if (base != null) {
+                base.previous = null;
+            }
+        } else if (node == top) {
+            top = top.previous;
+            if (top != null) {
+                top.next = null;
+            }
+        } else {
+            if (node.previous != null) {
+                node.previous.next = node.next;
+            }
+            if (node.next != null) {
+                node.next.previous = node.previous;
+            }
+        }
+
+        size--;
+        return removedValue;
+    }
+
+    private Node<T> getNode(int pos) {
+        if (pos < 0 || pos >= size) {
+            throw new IndexOutOfBoundsException("Posição fora dos limites da lista.");
+        }
+
+        Node<T> current;
+        int meio = size / 2;
+
+        if (pos < meio) {
+            current = base;
+            for (int i = 0; i < pos; i++) {
+                current = current.next;
+            }
+        } else {
+            current = top;
+            for (int i = size - 1; i > pos; i--) {
+                current = current.previous;
+            }
+        }
+
+        return current;
+    }
+
+    public void clear() {
+        base = null;
+        top = null;
+        size = 0;
+    }
+
+    // obter o valor da posição especificada
+    public T get(int pos) {
+        return getNode(pos).data;
+    }
+
+    // define o valor da posição especificada
+    public void set(int pos, T value) {
+        Node<T> node = getNode(pos);
+        node.data = value;
+    }
+
+    // encontra a posição de um valor específico
+    public int find(T value) {
+        Node<T> current = base; // começa pela base
+        int index = 0;
+
+        // percorre a lista enquanto tiver nó
+        while (current != null) {
+            // vê se o valor do nó atual é igual ao valor buscado
+            if (Objects.equals(current.data, value)) {
+                return index;
+            }
+            // move pro próximo nó
+            current = current.next;
+            index++;
+        }
+
+        // se o valor não for encontrado na lista, retorna -1
+        return -1;
+    }
+
+
+    public static void main(String[] args) {
+        // teste Fila
+        System.out.println("Testando como Fila:");
+        listaDupla<Integer> fila = new listaDupla<>();
+
+        // add elementos no final/topo
+        fila.add(1);
+        fila.add(2);
+        fila.add(3);
+
+        printList(fila);
+
+        // removendo elementos do início (Fila)
+        System.out.println("Elemento removido (base): " + fila.remove(0)); // Remove do início (base)
+        printList(fila);
+
+        System.out.println("Elemento removido (base): " + fila.remove(0)); // Remove do início (base)
+        printList(fila);
+
+        // add no final (topo)
+        fila.add(4);
+        fila.add(5);
+        printList(fila);
+
+        // teste pilha
+        System.out.println("\nTestando como Pilha:");
+        listaDupla<Integer> pilha = new listaDupla<>();
+
+        // add no topo
+        pilha.add(1);
+        pilha.add(2);
+        pilha.add(3);
+
+        printList(pilha);
+
+        // remove elementos do topo (pilha)
+        System.out.println("Elemento removido (topo): " + pilha.remove(pilha.getSize() - 1));
+        printList(pilha);
+
+        System.out.println("Elemento removido (topo): " + pilha.remove(pilha.getSize() - 1));
+        printList(pilha);
+
+        pilha.add(4);
+        pilha.add(5);
+        printList(pilha);
+    }
+
+    private static <T> void printList(listaDupla<T> list) {
+        System.out.print("Lista: ");
+        for (int i = 0; i < list.getSize(); i++) {
+            System.out.print(list.get(i) + " ");
+        }
+        System.out.println();
+    }
+}
